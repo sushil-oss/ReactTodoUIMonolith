@@ -27,7 +27,18 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # 4️⃣ SonarCloud Scan ✅
+      # 4️⃣ Build project
+      - name: Build project
+        run: npm run build
+
+      # 5️⃣ Upload build artifact
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: react-build
+          path: build/
+
+      # 6️⃣ SonarCloud Scan ✅
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
