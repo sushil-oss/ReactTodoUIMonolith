@@ -15,7 +15,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # Required for SonarCloud branch detection
 
       # 2️⃣ Setup Node.js (React project)
       - name: Setup Node.js
@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # 4️⃣ SonarCloud Scan ✅ FINAL
+      # 4️⃣ SonarCloud Scan ✅
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
@@ -37,4 +37,5 @@ jobs:
           args: >
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.organization=sushil-oss
-            -Dsonar.projectKey=sushil-oss_ReactTodoUIMonolith_41fb7513-5689-4c57-8a92-1a37e99a2000
+            -Dsonar.projectKey=sushil-oss_ReactTodoUIMonolith
+            -Dsonar.branch.name=main
