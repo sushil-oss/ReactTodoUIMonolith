@@ -27,18 +27,22 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # 4️⃣ Build project (ignore warnings in CI)
+      # 4️⃣ Lint code (check code quality)
+      - name: Lint code
+        run: CI=false npm run lint
+
+      # 5️⃣ Build project (ignore warnings in CI)
       - name: Build project
         run: CI=false npm run build
 
-      # 5️⃣ Upload build artifact
+      # 6️⃣ Upload build artifact
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4   # ✅ Updated to v4
+        uses: actions/upload-artifact@v4
         with:
           name: react-build
           path: build/
 
-      # 6️⃣ SonarCloud Scan ✅
+      # 7️⃣ SonarCloud Scan ✅
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
