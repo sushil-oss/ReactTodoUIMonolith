@@ -33,7 +33,7 @@ jobs:
 
       # 5️⃣ Upload build artifact
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: react-build
           path: build/
