@@ -11,32 +11,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout the repo
+      # 1️⃣ Checkout source code
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # full clone for Sonar analysis
+          fetch-depth: 0
 
-      # 2️⃣ Install Node dependencies (optional if you want build)
+      # 2️⃣ Setup Node.js (React project)
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
+      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # 3️⃣ Run SonarQube Scan
+      # 4️⃣ SonarQube Scan (🔥 FINAL FIX)
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
         with:
           projectBaseDir: .
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          args: >
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
-      # 4️⃣ Optional: Fail job if Quality Gate is not passed
+      # 5️⃣ (Optional) Fail build if Quality Gate fails
       # - name: SonarQube Quality Gate
       #   uses: SonarSource/sonarqube-quality-gate-action@v1
+      #   timeout-minutes: 5
       #   env:
       #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
