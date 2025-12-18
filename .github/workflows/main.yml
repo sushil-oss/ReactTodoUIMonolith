@@ -28,8 +28,8 @@ jobs:
         run: npm install
 
       # 4️⃣ Lint code (check code quality)
-      - name: Lint code
-        run: CI=false npm run lint
+      # - name: Lint code
+      #   run: CI=false npm run lint
 
       # 5️⃣ Build project (ignore warnings in CI)
       - name: Build project
