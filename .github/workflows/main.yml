@@ -1,4 +1,4 @@
-name: Build and SonarQube Scan
+name: Build and SonarCloud Scan
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-analyze:
-    name: Build and Analyze with SonarQube
+    name: Build and Analyze with SonarCloud
     runs-on: ubuntu-latest
 
     steps:
@@ -27,18 +27,14 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # 4️⃣ SonarQube Scan (🔥 FINAL FIX)
-      - name: SonarQube Scan
+      # 4️⃣ SonarCloud Scan ✅ FINAL
+      - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           projectBaseDir: .
           args: >
-            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-
-      # 5️⃣ (Optional) Fail build if Quality Gate fails
-      # - name: SonarQube Quality Gate
-      #   uses: SonarSource/sonarqube-quality-gate-action@v1
-      #   timeout-minutes: 5
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.organization=sushil-oss
+            -Dsonar.projectKey=sushil-oss_ReactTodoUIMonolith_41fb7513-5689-4c57-8a92-1a37e99a2000
