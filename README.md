@@ -9,7 +9,6 @@
      sudo apt install nodejs -y
      ```
 
-
 ### Configuration ⚙️
 
 2. **Update Backend URL:**
