@@ -127,3 +127,6 @@ jobs:
         with:
           name: todo-ui
           path: build/
+
+      - name: Build Application
+        run: CI=false npm run build    
