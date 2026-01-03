@@ -1,0 +1,129 @@
+name: Todo UI CI Pipeline
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+jobs:
+# ===================================
+# SOFTWARE COMPOSITION ANALYSIS
+# ===================================
+  software-composition-analysis:
+    name: Software Composition Analysis (Retire.js)
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16
+
+      - name: Dependency Vulnerability Scan (Retire.js)
+        shell: pwsh
+        run: |
+          npm install -g retire
+          npm install
+          retire --exitwith 0
+
+# ===================================
+# STATIC CODE ANALYSIS (SONARQUBE)
+# ===================================
+  static-code-analysis:
+    name: Static Code Analysis (SonarQube)
+    runs-on: ubuntu-latest
+    needs: software-composition-analysis
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16
+
+      - name: SonarQube Scan
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          npm install
+          npx sonar-scanner \
+            -Dsonar.projectKey=TodoPipeline \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=$SONAR_HOST_URL \
+            -Dsonar.login=$SONAR_TOKEN
+
+# ===================================
+# CODE QUALITY & LINTING
+# ===================================
+  code-quality-checks:
+    name: Code Quality & Linting
+    runs-on: windows-latest
+    needs: static-code-analysis
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16
+
+      - name: JavaScript Linting (Biome)
+        shell: pwsh
+        continue-on-error: true
+        run: |
+          Invoke-WebRequest `
+            -Uri "https://github.com/biomejs/biome/releases/download/%40biomejs%2Fbiome%402.3.8/biome-win32-x64.exe" `
+            -OutFile biome.exe
+          .\biome.exe lint ./src/
+
+      - name: CSS Linting (Stylelint)
+        shell: pwsh
+        continue-on-error: true
+        run: |
+          npm install -g stylelint stylelint-config-standard
+          stylelint ./src --config stylelint.config.mjs
+
+      - name: YAML Linting
+        shell: pwsh
+        continue-on-error: true
+        run: |
+          pip install yamllint
+          yamllint .
+
+      - name: Markdown Linting
+        shell: pwsh
+        continue-on-error: true
+        run: |
+          npm install -g markdownlint-cli
+          markdownlint .
+
+# ===================================
+# BUILD & PACKAGE
+# ===================================
+  build-and-package:
+    name: Build & Artifact Packaging
+    runs-on: ubuntu-latest
+    needs: code-quality-checks
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Application
+        run: npm run build
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: todo-ui
+          path: build/
