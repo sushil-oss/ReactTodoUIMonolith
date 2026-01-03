@@ -49,8 +49,8 @@ jobs:
         run: |
           npm install
           npx sonar-scanner \
-            -Dsonar.projectKey=sushil-oss_ReactTodoUIMonolith \
-            -Dsonar.organization=sushil-oss \
+            -Dsonar.projectKey=sushil-oss_my-firstSonarproject \
+            -Dsonar.organization=sushil-org \
             -Dsonar.sources=. \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=$SONAR_TOKEN
