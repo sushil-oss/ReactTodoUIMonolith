@@ -110,7 +110,7 @@ jobs:
     needs: code-quality-checks
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4 
 
       - uses: actions/setup-node@v4
         with:
@@ -121,12 +121,11 @@ jobs:
 
       - name: Build Application
         run: npm run build
+        env:
+          CI: false
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: todo-ui
           path: build/
-
-      - name: Build Application
-        run: CI=false npm run build    
